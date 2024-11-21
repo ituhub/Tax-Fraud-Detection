@@ -182,4 +182,4 @@ elif options == 'Fraud Prediction':
 # Footer
 # ============
 
-st.sidebar.info('Developed by [Your Name]')
+st.sidebar.info('Developed by [Umair Ali]')
