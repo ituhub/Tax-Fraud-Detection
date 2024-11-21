@@ -24,17 +24,30 @@ def generate_synthetic_data(n_samples=1000):
     })
 
     # Introduce some fraudulent cases
-    fraud_indices = np.random.choice(data.index, size=int(0.05 * n_samples), replace=False)
+    fraud_indices = np.random.choice(
+        data.index, size=int(0.05 * n_samples), replace=False
+    )
     data.loc[fraud_indices, 'Fraud'] = 1
     data['Fraud'] = data['Fraud'].fillna(0)
 
     # Adjust features to simulate fraud
-    data.loc[data['Fraud'] == 1, 'Deductions'] *= np.random.uniform(2, 5, size=data['Fraud'].sum())
-    data.loc[data['Fraud'] == 1, 'Refund_Claimed'] *= np.random.uniform(1.5, 3, size=data['Fraud'].sum())
+    num_fraud_cases = int(data['Fraud'].sum())
+
+    data.loc[data['Fraud'] == 1, 'Deductions'] *= np.random.uniform(
+        2, 5, size=num_fraud_cases
+    )
+    data.loc[data['Fraud'] == 1, 'Refund_Claimed'] *= np.random.uniform(
+        1.5, 3, size=num_fraud_cases
+    )
 
     # Ensure no negative values
     for col in ['Income', 'Deductions', 'Withholding', 'Refund_Claimed']:
         data[col] = data[col].apply(lambda x: abs(x))
+
+    # Reset index to avoid any issues
+    data.reset_index(drop=True, inplace=True)
+    # Ensure correct data types
+    data['Fraud'] = data['Fraud'].astype(int)
 
     return data
 
